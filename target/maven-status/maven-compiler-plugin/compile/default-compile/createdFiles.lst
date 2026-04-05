@@ -1,7 +1,0 @@
-com\jsondiff\config\WebConfig.class
-com\jsondiff\JsonDiffApplication.class
-com\jsondiff\service\JsonParseService.class
-com\jsondiff\model\JsonFormatResponse.class
-com\jsondiff\controller\JsonDiffController.class
-com\jsondiff\model\JsonFormatRequest.class
-com\jsondiff\service\JsonValidationService.class
