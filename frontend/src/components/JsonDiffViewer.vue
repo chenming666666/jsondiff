@@ -32,10 +32,15 @@ const highlightedRight = computed(() => {
   return highlightDiff(props.leftFormatted, props.rightFormatted, 'right')
 })
 
+const MAX_DISPLAY_LINES = 50000
+
 function highlightDiff(left, right, side) {
   const leftLines = left.split('\n')
   const rightLines = right.split('\n')
   const diffs = diffLines(leftLines.join('\n'), rightLines.join('\n'))
+
+  let totalLines = 0
+  let truncated = false
 
   if (side === 'left') {
     let result = ''
@@ -44,19 +49,28 @@ function highlightDiff(left, right, side) {
       const lines = part.value.split('\n')
       if (lines[lines.length - 1] === '') lines.pop()
       lines.forEach(line => {
+        if (totalLines >= MAX_DISPLAY_LINES) {
+          truncated = true
+          return
+        }
         if (part.added) {
           // Added in right, nothing in left
         } else if (part.removed) {
           // Removed from left, mark as deleted
           result += `<span class="diff-removed">${escapeHtml(line)}</span>\n`
           leftIdx++
+          totalLines++
         } else {
           // Unchanged
           result += `${escapeHtml(line)}\n`
           leftIdx++
+          totalLines++
         }
       })
     })
+    if (truncated) {
+      result += `\n<span class="diff-truncated">... Output truncated after ${MAX_DISPLAY_LINES} lines. Large JSON may perform better with smaller input.</span>\n`
+    }
     return result
   } else {
     let result = ''
@@ -65,19 +79,28 @@ function highlightDiff(left, right, side) {
       const lines = part.value.split('\n')
       if (lines[lines.length - 1] === '') lines.pop()
       lines.forEach(line => {
+        if (totalLines >= MAX_DISPLAY_LINES) {
+          truncated = true
+          return
+        }
         if (part.removed) {
           // Removed from left, nothing in right
         } else if (part.added) {
           // Added in right, mark as added
           result += `<span class="diff-added">${escapeHtml(line)}</span>\n`
           rightIdx++
+          totalLines++
         } else {
           // Unchanged
           result += `${escapeHtml(line)}\n`
           rightIdx++
+          totalLines++
         }
       })
     })
+    if (truncated) {
+      result += `\n<span class="diff-truncated">... Output truncated after ${MAX_DISPLAY_LINES} lines. Large JSON may perform better with smaller input.</span>\n`
+    }
     return result
   }
 }
@@ -149,5 +172,10 @@ function escapeHtml(text) {
   background: #ffebe9;
   display: inline-block;
   width: 100%;
+}
+
+:deep(.diff-truncated) {
+  color: #999;
+  font-style: italic;
 }
 </style>
