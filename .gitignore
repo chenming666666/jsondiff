@@ -1,0 +1,22 @@
+# IDE
+.idea/
+
+# Dependencies
+node_modules/
+frontend/node_modules/
+
+# Build output
+target/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Vite cache
+frontend/.vite/
+
+# Temp dirs
+frontend/node_modules/.vite/deps_temp_*/
+
+# Windows paths that may have been accidentally committed
+D:\\ repo/
